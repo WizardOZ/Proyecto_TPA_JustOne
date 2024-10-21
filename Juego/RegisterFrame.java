@@ -16,13 +16,18 @@ public class RegisterFrame extends JFrame {
 
         // Panel para organizar los elementos
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(3, 2));
+        panel.setLayout(new GridLayout(6, 2));
 
         // Crear los componentes de la interfaz
         JLabel userLabel = new JLabel("Nuevo Usuario:");
         JTextField userText = new JTextField();
         JLabel passwordLabel = new JLabel("Nueva Contraseña:");
         JPasswordField passwordText = new JPasswordField();
+        JLabel emailLabel = new JLabel("Email:");
+        JTextField emailText = new JTextField();
+        JLabel phoneLabel = new JLabel("Telefono:");
+        JPasswordField phoneText = new JPasswordField();
+
 
         // Botón de registro
         JButton registerButton = new JButton("Registrar");
@@ -32,6 +37,10 @@ public class RegisterFrame extends JFrame {
         panel.add(userText);
         panel.add(passwordLabel);
         panel.add(passwordText);
+        panel.add(emailLabel);
+        panel.add(emailText);
+        panel.add(phoneLabel);
+        panel.add(phoneText);
         panel.add(new JLabel());  // Espacio vacío
         panel.add(registerButton);
 
