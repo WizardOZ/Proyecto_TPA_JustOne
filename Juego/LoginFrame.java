@@ -1,9 +1,13 @@
-package Juego;
-
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class LoginFrame extends JFrame {
+
+    private JTextField userText;
+    private JPasswordField passwordText;
 
     // Constructor para inicializar la ventana de login
     public LoginFrame() {
@@ -21,9 +25,9 @@ public class LoginFrame extends JFrame {
 
         // Crear los componentes de la interfaz
         JLabel userLabel = new JLabel("Usuario:");
-        JTextField userText = new JTextField(15); // Definimos el tamaño del campo de texto
+        userText = new JTextField(15); // Definimos el tamaño del campo de texto
         JLabel passwordLabel = new JLabel("Contraseña:");
-        JPasswordField passwordText = new JPasswordField(15); // Definimos el tamaño de la contraseña
+        passwordText = new JPasswordField(15); // Definimos el tamaño de la contraseña
 
         // Botones
         JButton loginButton = new JButton("Iniciar sesión");
@@ -60,34 +64,54 @@ public class LoginFrame extends JFrame {
 
         // Añadir el panel a la ventana y centrarlo dentro del frame
         add(panel, BorderLayout.CENTER);
-
         setVisible(true);
 
         // Acción al hacer clic en el botón de login
-        loginButton.addActionListener(e -> {
-            String user = userText.getText();
-            String password = new String(passwordText.getPassword());
-
-            // Usuario y contraseña predefinidos
-            String predefinedUser = "admin";
-            String predefinedPassword = "1234";
-
-            // Validar las credenciales
-            if (user.equals(predefinedUser) && password.equals(predefinedPassword)) {
-                JOptionPane.showMessageDialog(null, "Inicio de sesión exitoso.");
-                // Aquí puedes continuar con la lógica de tu aplicación
-            } else {
-                JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
+        loginButton.addActionListener(e -> iniciarSesion());
 
         // Acción al hacer clic en el botón de registrarse
         registerButton.addActionListener(e -> {
-            // Abrir el nuevo formulario de registro
             new RegisterFrame();  // Crea la ventana de registro
             dispose(); // Cierra la ventana actual de login
         });
     }
 
+    private void iniciarSesion() {
+        String user = userText.getText();
+        String password = new String(passwordText.getPassword());
 
+        // Validar las credenciales desde archivo txt
+        boolean loginExitoso = false;  // Variable para comprobar el éxito del login
+        try (BufferedReader reader = new BufferedReader(new FileReader("usuarios.txt"))) {
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                System.out.println("Leyendo línea: " + linea);  // Mensaje de depuración para ver si lee correctamente
+                String[] datos = linea.split(",");
+                if (datos.length >= 2) {  // Asegurarse de que la línea tenga suficientes datos
+                    String usuarioGuardado = datos[0];
+                    String passwordGuardada = datos[1];
+
+                    if (user.equals(usuarioGuardado) && password.equals(passwordGuardada)) {
+                        loginExitoso = true;
+                        break;  // Salir del bucle una vez que se encuentra la coincidencia
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al leer los datos.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;  // Salir de la función si hay un error
+        }
+
+        // Mostrar el resultado del login después de procesar el archivo
+        if (loginExitoso) {
+            JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso.");
+        } else {
+            JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(() -> new LoginFrame());
+    }
 }
