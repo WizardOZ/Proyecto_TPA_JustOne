@@ -1,11 +1,17 @@
-package Juego;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class RegisterFrame extends JFrame {
+
+    private JTextField userText;
+    private JPasswordField passwordText;
+    private JTextField emailText;
+    private JTextField phoneText;
 
     // Constructor para inicializar la ventana de registro
     public RegisterFrame() {
@@ -20,14 +26,13 @@ public class RegisterFrame extends JFrame {
 
         // Crear los componentes de la interfaz
         JLabel userLabel = new JLabel("Nuevo Usuario:");
-        JTextField userText = new JTextField();
+        userText = new JTextField();
         JLabel passwordLabel = new JLabel("Nueva Contraseña:");
-        JPasswordField passwordText = new JPasswordField();
+        passwordText = new JPasswordField();
         JLabel emailLabel = new JLabel("Email:");
-        JTextField emailText = new JTextField();
+        emailText = new JTextField();
         JLabel phoneLabel = new JLabel("Telefono:");
-        JPasswordField phoneText = new JPasswordField();
-
+        phoneText = new JTextField();
 
         // Botón de registro
         JButton registerButton = new JButton("Registrar");
@@ -52,20 +57,31 @@ public class RegisterFrame extends JFrame {
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String newUser = userText.getText();
-                String newPassword = new String(passwordText.getPassword());
-
-                // Simular el registro
-                if (!newUser.isEmpty() && !newPassword.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Registro exitoso.");
-                    // Redirigir de nuevo al Login
-                    new LoginFrame();
-                    dispose(); // Cierra la ventana de registro
-                } else {
-                    JOptionPane.showMessageDialog(null, "Por favor, rellene todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                registrarUsuario();
             }
         });
     }
-}
 
+    private void registrarUsuario() {
+        String newUser = userText.getText();
+        String newPassword = new String(passwordText.getPassword());
+        String email = emailText.getText();
+        String phone = phoneText.getText();
+
+        if (!newUser.isEmpty() && !newPassword.isEmpty() && !email.isEmpty() && !phone.isEmpty()) {
+            // Guardar los datos en un archivo de texto
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("usuarios.txt", true))) {
+                writer.write(newUser + "," + newPassword + "," + email + "," + phone);
+                writer.newLine();
+                JOptionPane.showMessageDialog(this, "Registro exitoso.");
+                new LoginFrame(); // Redirigir de nuevo al Login
+                dispose(); // Cerrar la ventana de registro
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error al guardar los datos.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor, rellene todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
