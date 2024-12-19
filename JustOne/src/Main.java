@@ -1,9 +1,12 @@
 import Modelos.*;
 import InterfazGrafica.*;
+
+import java.awt.*;
+
 public class Main {
     public static void main(String[] args) {
-        Carrito carrito = new Carrito();
-        //carrito.mostrarMenu();
-        new LoginFrame();
+            new LoginFrame();
+
+
     }
 }

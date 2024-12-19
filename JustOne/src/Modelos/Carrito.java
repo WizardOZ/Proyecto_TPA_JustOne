@@ -1,24 +1,34 @@
 package Modelos;
 import java.util.ArrayList;
 import java.util.List;
-public class Carrito {
-    private List<Producto> productos;
 
-    public Carrito() {
-        this.productos = new ArrayList<>();
-    }
 
+public class Carrito implements ManejoCarrito {
+    private List<Producto> productos = new ArrayList<>();
+
+    @Override
     public void agregarProducto(Producto producto) {
         productos.add(producto);
     }
 
-    public void mostrarProductos() {
-        if (productos.isEmpty()) {
-            System.out.println("El carrito está vacío.");
-        } else {
-            for (Producto p : productos) {
-                System.out.println(p.getNombre() + " - " + p.getCantidad() + " unidades");
-            }
+    @Override
+    public void eliminarProducto(int index) {
+        if (index >= 0 && index < productos.size()) {
+            productos.remove(index);
         }
+    }
+
+    @Override
+    public double calcularTotal() {
+        return productos.stream().mapToDouble(p -> p.getPrecio() * p.getCantidad()).sum();
+    }
+
+    public List<Producto> getProductos() {
+        return productos;
+    }
+
+
+    public void vaciarCarrito() {
+        productos.clear();
     }
 }

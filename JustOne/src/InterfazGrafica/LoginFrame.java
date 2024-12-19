@@ -84,7 +84,7 @@ public class LoginFrame extends JFrame {
 
         // Validar las credenciales desde archivo txt
         boolean loginExitoso = false;
-        Usuario usuarioActual = null; // Usuario autenticado
+        Usuario usuarioActual = null;
 
         try (BufferedReader reader = new BufferedReader(new FileReader("usuarios.txt"))) {
             String linea;
@@ -98,7 +98,7 @@ public class LoginFrame extends JFrame {
 
                     if (user.equals(usuarioGuardado) && password.equals(passwordGuardada)) {
                         // Determina si el usuario es un administrador o cliente
-                        if (user.equals("admin")) {
+                        if (user.equalsIgnoreCase("admin")) {
                             usuarioActual = new Administrador(user, email, telefono);
                         } else {
                             usuarioActual = new Cliente(user, email, telefono);
@@ -114,14 +114,19 @@ public class LoginFrame extends JFrame {
             return;
         }
 
-        if (loginExitoso && usuarioActual != null) {
+        if (loginExitoso) {
             JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso.");
-            new TiendaFrame(usuarioActual); // Abre la ventana de la tienda
+            if (usuarioActual instanceof Cliente) {
+                new TiendaFrame((Cliente) usuarioActual); // Asegura que solo se pase un Cliente
+            } else if (usuarioActual instanceof Administrador) {
+                JOptionPane.showMessageDialog(this, "El administrador no tiene acceso a la tienda.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            }
             dispose(); // Cierra la ventana de inicio de sesión
         } else {
             JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> new LoginFrame());
